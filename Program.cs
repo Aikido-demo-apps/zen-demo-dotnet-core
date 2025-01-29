@@ -32,9 +32,6 @@ app.Use((context, next) =>
     return next();
 });
 
-// add Zen middleware
-app.UseZenFireWall();
-
 app.UseZenFireWall();
 
 app.UseAuthorization();
