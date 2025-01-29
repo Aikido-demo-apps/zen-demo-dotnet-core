@@ -7,4 +7,8 @@
     <RootNamespace>zen_demo_dotnet</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Aikido.Zen.DotNetCore" Version="1.1.0" />
+  </ItemGroup>
+
 </Project>

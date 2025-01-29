@@ -1,7 +1,10 @@
+using Aikido.Zen.DotNetCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddZenFireWall();
 
 var app = builder.Build();
 
@@ -17,6 +20,21 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseUserGenerator();
+
+app.Use((context, next) =>
+{
+    var id = context.Items["UserId"] as string ?? null;
+    var name = context.Items["UserName"] as string ?? null;
+    if (id != null)
+        Zen.SetUser(id, name, context);
+    return next();
+});
+
+// add Zen middleware
+app.UseZenFireWall();
+
+app.UseZenFireWall();
 
 app.UseAuthorization();
 
