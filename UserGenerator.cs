@@ -1,6 +1,10 @@
+using System.Text;
+
+namespace zen_demo_dotnet;
+
 public class UserGenerator
 {
-    private readonly string[] FirstNames = new[]
+    private readonly string[] _firstNames = new[]
     {
         "James", "Mary", "John", "Patricia", "Robert", "Jennifer", "Michael", "Linda",
         "William", "Elizabeth", "David", "Barbara", "Richard", "Susan", "Joseph", "Jessica",
@@ -8,7 +12,7 @@ public class UserGenerator
         "Matthew", "Betty", "Anthony", "Margaret", "Mark", "Sandra", "Donald", "Ashley"
     };
 
-    private readonly string[] LastNames = new[]
+    private readonly string[] _lastNames = new[]
     {
         "Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis",
         "Rodriguez", "Martinez", "Hernandez", "Lopez", "Gonzales", "Wilson", "Anderson",
@@ -30,14 +34,40 @@ public class UserGenerator
         }
     }
 
+    private string ToBase36(int value)
+    {
+        const string chars = "0123456789abcdefghijklmnopqrstuvwxyz";
+        var result = new StringBuilder();
+
+        // Handle 0 explicitly
+        if (value == 0)
+        {
+            return "0";
+        }
+
+        value = Math.Abs(value); // Ensure positive number
+
+        while (value > 0)
+        {
+            result.Insert(0, chars[value % 36]);
+            value /= 36;
+        }
+
+        return result.ToString();
+    }
+
     public (string Id, string Name) GenerateUserFromIP(string ip)
     {
         var hash = GetHashCode(ip);
 
-        var firstName = FirstNames[hash % FirstNames.Length];
-        var lastName = LastNames[(hash >> 4) % LastNames.Length];
+        var firstName = _firstNames[hash % _firstNames.Length];
+        var lastName = _lastNames[(hash >> 4) % _lastNames.Length];
 
-        var userId = Convert.ToString(hash, 36).Substring(0, Math.Min(8, Convert.ToString(hash, 36).Length));
+        var userId = ToBase36(hash);
+        if (userId.Length > 8)
+        {
+            userId = userId.Substring(0, 8);
+        }
 
         return (userId, $"{firstName} {lastName}");
     }

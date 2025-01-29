@@ -1,3 +1,5 @@
+using zen_demo_dotnet;
+
 public class UserGeneratorMiddleware
 {
     private readonly RequestDelegate _next;
