@@ -9,8 +9,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
-    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor;
-    options.KnownNetworks.Add(new IPNetwork(IPAddress.Any, 128));
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+
+    // Clear all known networks
+    options.KnownProxies.Clear();
+    options.KnownNetworks.Clear();
+
+    // Trust all proxies (not recommended for production ;))
+    options.KnownNetworks.Add(new IPNetwork(IPAddress.Any, 0));
 });
 builder.Services.AddZenFireWall();
 
