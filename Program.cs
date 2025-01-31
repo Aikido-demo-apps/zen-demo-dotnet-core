@@ -1,5 +1,7 @@
+using System.Net;
 using Aikido.Zen.DotNetCore;
 using Microsoft.AspNetCore.HttpOverrides;
+using IPNetwork = Microsoft.AspNetCore.HttpOverrides.IPNetwork;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,8 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
-    options.ForwardedHeaders =
-        ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor;
+    options.KnownNetworks.Add(new IPNetwork(IPAddress.Any, 128));
 });
 builder.Services.AddZenFireWall();
 
