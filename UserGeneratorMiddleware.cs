@@ -1,4 +1,4 @@
-using zen_demo_dotnet;
+namespace zen_demo_dotnet;
 
 public class UserGeneratorMiddleware
 {
