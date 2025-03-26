@@ -63,9 +63,12 @@ namespace zen_demo_dotnet.Helpers
         {
             try
             {
-                if (File.Exists(filePath))
+                // Construct the full path within the wwwroot/blogs directory
+                string fullPath = Path.Combine("wwwroot/blogs", filePath);
+                
+                if (File.Exists(fullPath))
                 {
-                    return File.ReadAllText(filePath);
+                    return File.ReadAllText(fullPath);
                 }
                 return "File not found";
             }
