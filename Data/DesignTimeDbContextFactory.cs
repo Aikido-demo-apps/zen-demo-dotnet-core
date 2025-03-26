@@ -9,7 +9,7 @@ namespace zen_demo_dotnet.Data
         {
             // Use a default connection string for migrations
             var connectionString = "Host=localhost;Database=zen_demo;Username=postgres;Password=postgres";
-            
+
             // Check if DATABASE_URL environment variable is set
             var envConnectionString = Environment.GetEnvironmentVariable("DATABASE_URL");
             if (!string.IsNullOrEmpty(envConnectionString))
