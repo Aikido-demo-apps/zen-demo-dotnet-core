@@ -6,7 +6,6 @@ using zen_demo_dotnet.Models;
 namespace zen_demo_dotnet.Controllers
 {
     [ApiController]
-    [Route("api")]
     public class ApiController : ControllerBase
     {
         private readonly DatabaseHelper _databaseHelper;
@@ -23,7 +22,7 @@ namespace zen_demo_dotnet.Controllers
             _logger = logger;
         }
 
-        [HttpGet("pets")]
+        [HttpGet("api/pets")]
         public async Task<IActionResult> GetPets()
         {
             var pets = await _databaseHelper.GetAllPetsAsync();
@@ -31,7 +30,7 @@ namespace zen_demo_dotnet.Controllers
             return Ok(pets);
         }
 
-        [HttpPost("create")]
+        [HttpPost("api/create")]
         public async Task<IActionResult> CreatePet([FromBody] CreateRequest request)
         {
             if (string.IsNullOrEmpty(request.Name))
@@ -48,7 +47,7 @@ namespace zen_demo_dotnet.Controllers
             return Ok("Success!");
         }
 
-        [HttpPost("execute")]
+        [HttpPost("api/execute")]
         public IActionResult ExecuteCommandPost([FromBody] CommandRequest request)
         {
             if (string.IsNullOrEmpty(request.UserCommand))
@@ -60,14 +59,14 @@ namespace zen_demo_dotnet.Controllers
             return Ok(result);
         }
 
-        [HttpGet("execute/{command}")]
+        [HttpGet("api/execute/{command}")]
         public IActionResult ExecuteCommandGet(string command)
         {
             var result = _appHelpers.ExecuteShellCommand(command);
             return Ok(result);
         }
 
-        [HttpPost("request")]
+        [HttpPost("api/request")]
         public async Task<IActionResult> MakeRequest([FromBody] RequestRequest request)
         {
             if (string.IsNullOrEmpty(request.Url))
@@ -79,7 +78,7 @@ namespace zen_demo_dotnet.Controllers
             return Ok(response);
         }
 
-        [HttpPost("request2")]
+        [HttpPost("api/request2")]
         public async Task<IActionResult> MakeRequest2([FromBody] RequestRequest request)
         {
             if (string.IsNullOrEmpty(request.Url))
@@ -91,7 +90,7 @@ namespace zen_demo_dotnet.Controllers
             return Ok(response);
         }
 
-        [HttpGet("read")]
+        [HttpGet("api/read")]
         public IActionResult ReadFile([FromQuery] string path)
         {
             if (string.IsNullOrEmpty(path))
