@@ -23,7 +23,7 @@ namespace zen_demo_dotnet.Controllers
         }
 
         [HttpGet("pages/request")]
-        public IActionResult Request()
+        public IActionResult HttpRequest()
         {
             return File("~/request.html", "text/html");
         }

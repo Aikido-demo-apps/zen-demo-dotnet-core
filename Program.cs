@@ -1,4 +1,5 @@
 using System.Net;
+using Aikido.Zen.Core.Exceptions;
 using Aikido.Zen.DotNetCore;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ using IPNetwork = Microsoft.AspNetCore.HttpOverrides.IPNetwork;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddZenFirewall();
 builder.Services.AddRazorPages();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -53,15 +55,6 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
     // Trust all proxies (not recommended for production ;))
     options.KnownNetworks.Add(new IPNetwork(IPAddress.Any, 0));
 });
-try
-{
-    builder.Services.AddZenFireWall();
-}
-catch (Exception ex)
-{
-    Console.WriteLine($"Warning: Unable to add Zen FireWall service: {ex.Message}");
-    Console.WriteLine("Application will continue without Zen protection.");
-}
 
 var app = builder.Build();
 
@@ -90,16 +83,6 @@ app.Use((context, next) =>
         Zen.SetUser(id, name, context);
     return next();
 });
-
-try
-{
-    app.UseZenFireWall();
-}
-catch (Exception ex)
-{
-    Console.WriteLine($"Warning: Unable to initialize Zen FireWall: {ex.Message}");
-    Console.WriteLine("Application will continue without Zen protection.");
-}
 
 app.UseAuthorization();
 
@@ -137,5 +120,15 @@ if (!Directory.Exists(publicDir))
     Directory.CreateDirectory(publicDir);
     Console.WriteLine($"Created directory: {publicDir}");
 }
+
+try
+{
+    app.UseZenFirewall();
+}
+catch(Exception e)
+{
+    Console.WriteLine("Aikido does not run on ARM chips", e);
+}
+
 
 app.Run();
