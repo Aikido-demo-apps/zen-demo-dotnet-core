@@ -68,27 +68,32 @@ if (!app.Environment.IsDevelopment())
 
 app.UseForwardedHeaders();
 app.UseHttpsRedirection();
-// Configure static files to serve from root
-app.UseDefaultFiles();
-app.UseStaticFiles();
+app.UseAuthorization();
 
-app.UseRouting();
-app.UseUserGenerator();
+// Enable Zen
+try
+{
+    app.UseZenFirewall();
+}
+catch(Exception e)
+{
+    Console.WriteLine("Aikido does not run on ARM chips", e);
+}
 
+// Track user
 app.Use((context, next) =>
 {
-    var id = context.Items["UserId"] as string ?? null;
-    var name = context.Items["UserName"] as string ?? null;
+    var id = context.Items["X-User-ID"] as string ?? null;
+    var name = context.Items["X-User-Name"] as string ?? null;
     if (id != null)
         Zen.SetUser(id, name, context);
     return next();
 });
 
-app.UseAuthorization();
-
-// Add the public fallback middleware before mapping routes
+app.UseDefaultFiles();
+app.UseStaticFiles();
+app.UseRouting();
 app.UsePublicFallback();
-
 app.MapRazorPages();
 app.MapControllers();
 
@@ -112,23 +117,5 @@ catch (Exception ex)
 {
     Console.WriteLine($"An error occurred while migrating the database: {ex.Message}");
 }
-
-// Create the public directory if it doesn't exist
-var publicDir = Path.Combine(app.Environment.WebRootPath, "public");
-if (!Directory.Exists(publicDir))
-{
-    Directory.CreateDirectory(publicDir);
-    Console.WriteLine($"Created directory: {publicDir}");
-}
-
-try
-{
-    app.UseZenFirewall();
-}
-catch(Exception e)
-{
-    Console.WriteLine("Aikido does not run on ARM chips", e);
-}
-
 
 app.Run();
