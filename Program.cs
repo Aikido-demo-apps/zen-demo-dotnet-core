@@ -1,6 +1,7 @@
 using System.Net;
 using Aikido.Zen.DotNetCore;
 using Microsoft.AspNetCore.HttpOverrides;
+using zen_demo_dotnet;
 using IPNetwork = Microsoft.AspNetCore.HttpOverrides.IPNetwork;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -68,6 +69,17 @@ catch (Exception ex)
 
 app.UseAuthorization();
 
+// Add the public fallback middleware before mapping routes
+app.UsePublicFallback();
+
 app.MapRazorPages();
+
+// Create the public directory if it doesn't exist
+var publicDir = Path.Combine(app.Environment.WebRootPath, "public");
+if (!Directory.Exists(publicDir))
+{
+    Directory.CreateDirectory(publicDir);
+    Console.WriteLine($"Created directory: {publicDir}");
+}
 
 app.Run();
