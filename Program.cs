@@ -18,7 +18,15 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
     // Trust all proxies (not recommended for production ;))
     options.KnownNetworks.Add(new IPNetwork(IPAddress.Any, 0));
 });
-builder.Services.AddZenFireWall();
+try
+{
+    builder.Services.AddZenFireWall();
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Warning: Unable to add Zen FireWall service: {ex.Message}");
+    Console.WriteLine("Application will continue without Zen protection.");
+}
 
 var app = builder.Build();
 
@@ -32,6 +40,8 @@ if (!app.Environment.IsDevelopment())
 
 app.UseForwardedHeaders();
 app.UseHttpsRedirection();
+// Configure static files to serve from root
+app.UseDefaultFiles();
 app.UseStaticFiles();
 
 app.UseRouting();
@@ -46,7 +56,15 @@ app.Use((context, next) =>
     return next();
 });
 
-app.UseZenFireWall();
+try
+{
+    app.UseZenFireWall();
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Warning: Unable to initialize Zen FireWall: {ex.Message}");
+    Console.WriteLine("Application will continue without Zen protection.");
+}
 
 app.UseAuthorization();
 
