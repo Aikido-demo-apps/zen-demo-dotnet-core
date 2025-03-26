@@ -10,19 +10,6 @@ using IPNetwork = Microsoft.AspNetCore.HttpOverrides.IPNetwork;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Accept remote IP
-builder.Services.Configure<ForwardedHeadersOptions>(options =>
-{
-    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-
-    // Clear all known networks
-    options.KnownProxies.Clear();
-    options.KnownNetworks.Clear();
-
-    // Trust all proxies (not recommended for production ;))
-    options.KnownNetworks.Add(new IPNetwork(IPAddress.Any, 0));
-});
-
 // Add services to the container.
 builder.Services.AddZenFirewall();
 builder.Services.AddRazorPages();
@@ -59,6 +46,12 @@ builder.Services.AddScoped<DatabaseHelper>();
 builder.Services.AddSingleton<AppHelpers>();
 
 var app = builder.Build();
+
+// Allow XForwardedFor
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
