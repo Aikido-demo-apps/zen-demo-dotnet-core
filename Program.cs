@@ -14,7 +14,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Add database context
+// Get database configuration
 var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL") ?? 
     throw new InvalidOperationException("DATABASE_URL environment variable is not set");
 
@@ -35,6 +35,7 @@ if (connectionString.StartsWith("postgres://"))
     connectionString = $"Host={host};Port={port};Database={database};Username={username};Password={password};SSL Mode={sslMode}";
 }
 
+// Add database
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
 
