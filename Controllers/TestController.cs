@@ -26,8 +26,8 @@ namespace zen_demo_dotnet.Controllers
         [HttpGet("test_user_blocking")]
         public IActionResult TestUserBlocking()
         {
-            var userId = HttpContext.Items["UserId"] as string;
-            return Content($"Hello User with id: {userId}");
+            Request.Headers.TryGetValue("user", out var user);
+            return Content($"Hello User with id: {user}");
         }
     }
 }

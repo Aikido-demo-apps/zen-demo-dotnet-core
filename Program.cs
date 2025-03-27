@@ -1,12 +1,9 @@
-using System.Net;
-using Aikido.Zen.Core.Exceptions;
 using Aikido.Zen.DotNetCore;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using zen_demo_dotnet;
 using zen_demo_dotnet.Data;
 using zen_demo_dotnet.Helpers;
-using IPNetwork = Microsoft.AspNetCore.HttpOverrides.IPNetwork;
 
 var builder = WebApplication.CreateBuilder(args);
 
