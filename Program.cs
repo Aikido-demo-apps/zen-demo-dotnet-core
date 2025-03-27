@@ -91,6 +91,11 @@ app.Use((context, next) =>
     return next();
 });
 
+
+app.UseDefaultFiles();
+app.UseStaticFiles();
+app.UseRouting();
+app.UsePublicFallback();
 // Enable Zen
 try
 {
@@ -100,11 +105,6 @@ catch(Exception e)
 {
     Console.WriteLine("Aikido does not run on ARM chips", e);
 }
-
-app.UseDefaultFiles();
-app.UseStaticFiles();
-app.UseRouting();
-app.UsePublicFallback();
 app.MapRazorPages();
 app.MapControllers();
 
