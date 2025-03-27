@@ -16,7 +16,7 @@ RUN dotnet publish -c Release -o /app
 FROM mcr.microsoft.com/dotnet/aspnet:${DOTNET_SDK_VERSION}
 ENV ASPNETCORE_URLS http://+:8080
 ENV ASPNETCORE_ENVIRONMENT Production
-ENV AIKIDO_BLOCKING true
+ENV AIKIDO_BLOCK true
 EXPOSE 8080
 WORKDIR /app
 COPY --from=build /app .
