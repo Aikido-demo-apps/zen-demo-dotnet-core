@@ -8,15 +8,16 @@ using zen_demo_dotnet.Helpers;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddZenFirewall();
 builder.Services.AddRazorPages();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Get database configuration
-var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL") ?? 
-    throw new InvalidOperationException("DATABASE_URL environment variable is not set");
+var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL") ??
+    builder.Configuration.GetValue<string>("DATABASE_URL") ??
+    builder.Configuration.GetConnectionString("DefaultConnection") ??
+throw new InvalidOperationException("DATABASE_URL environment variable is not set");
 
 // Convert from URL format to connection string if needed
 if (connectionString.StartsWith("postgres://"))
@@ -42,6 +43,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Register helpers
 builder.Services.AddScoped<DatabaseHelper>();
 builder.Services.AddSingleton<AppHelpers>();
+
+// Add zen services
+builder.Services.AddZenFirewall();
 
 // Create app
 var app = builder.Build();
