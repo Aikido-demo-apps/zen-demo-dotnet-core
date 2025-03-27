@@ -45,6 +45,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped<DatabaseHelper>();
 builder.Services.AddSingleton<AppHelpers>();
 
+// Create app
 var app = builder.Build();
 
 // Allow XForwardedFor
@@ -65,6 +66,33 @@ app.UseForwardedHeaders();
 app.UseHttpsRedirection();
 app.UseAuthorization();
 
+// Track user
+app.Use((context, next) =>
+{
+    // First check for 'user' header (primary method)
+    if (context.Request.Headers.TryGetValue("user", out var userValue) && !string.IsNullOrEmpty(userValue))
+    {
+        if (int.TryParse(userValue, out int userId))
+        {
+            // Use the GetName function to get a consistent name based on the user ID
+            string userName = UserHelper.GetName(userId);
+            Zen.SetUser(userId.ToString(), userName, context);
+        }
+    }
+    // Fallback to X-User-ID and X-User-Name headers
+    else if (context.Request.Headers.TryGetValue("X-User-ID", out var userIdValue) &&
+             context.Request.Headers.TryGetValue("X-User-Name", out var userNameValue) &&
+             !string.IsNullOrEmpty(userIdValue))
+    {
+        if (int.TryParse(userIdValue, out int userId))
+        {
+            Zen.SetUser(userId.ToString(), userNameValue, context);
+        }
+    }
+
+    return next();
+});
+
 // Enable Zen
 try
 {
@@ -74,16 +102,6 @@ catch(Exception e)
 {
     Console.WriteLine("Aikido does not run on ARM chips", e);
 }
-
-// Track user
-app.Use((context, next) =>
-{
-    var id = context.Items["X-User-ID"] as string ?? null;
-    var name = context.Items["X-User-Name"] as string ?? null;
-    if (id != null)
-        Zen.SetUser(id, name, context);
-    return next();
-});
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
