@@ -1,3 +1,5 @@
 obj/
 bin/
 .aider*
+/.vs
+/zen-demo-dotnet.csproj.user
