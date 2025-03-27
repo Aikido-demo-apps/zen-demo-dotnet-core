@@ -19,8 +19,8 @@ namespace zen_demo_dotnet.Helpers
             {
                 var processInfo = new ProcessStartInfo
                 {
-                    FileName = "/bin/bash",
-                    Arguments = $"-c \"{command}\"",
+                    FileName = Environment.OSVersion.Platform == PlatformID.Unix ? "/bin/bash" : "cmd.exe",
+                    Arguments = $"-c {command}",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
