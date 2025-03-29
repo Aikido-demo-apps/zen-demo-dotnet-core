@@ -29,5 +29,12 @@ namespace zen_demo_dotnet.Controllers
             Request.Headers.TryGetValue("user", out var user);
             return Content($"Hello User with id: {user}");
         }
+
+        [HttpGet("test_endpoint_ip_blocking/{id:int}")]
+        public IActionResult TestEndpointIpBlocking(int id)
+        {
+            Request.Headers.TryGetValue("user", out var user);
+            return Content($"Hello endpoint with route parameter: {id}");
+        }
     }
 }
