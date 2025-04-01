@@ -8,6 +8,10 @@ using zen_demo_dotnet.Helpers;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+// Add zen services
+builder.Services.AddZenFirewall();
+//add other services
 builder.Services.AddRazorPages();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -43,9 +47,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Register helpers
 builder.Services.AddScoped<DatabaseHelper>();
 builder.Services.AddSingleton<AppHelpers>();
-
-// Add zen services
-builder.Services.AddZenFirewall();
 
 // Create app
 var app = builder.Build();
@@ -108,6 +109,7 @@ catch (Exception e)
 app.UseDefaultFiles();
 app.UseStaticFiles();
 app.UseRouting();
+app.UseTestingMiddleware(); // used to test unregistered routes
 app.UsePublicFallback();
 app.MapRazorPages();
 app.MapControllers();
