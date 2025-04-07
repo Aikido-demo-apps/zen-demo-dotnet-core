@@ -106,7 +106,8 @@ namespace zen_demo_dotnet.Controllers
         public IActionResult GetClientIp()
         {
             var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
-            return Ok(ip);
+            var aikidoIp = ((dynamic)HttpContext.Items["Aikido.Zen.Context"]).RemoteAddress;
+            return Ok($"{ip}\r\n{aikidoIp}\r\n{HttpContext.Request.Headers["X-Forwarded-For"]}");
         }
 
         [HttpGet("clear")]

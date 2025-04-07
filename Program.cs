@@ -55,7 +55,8 @@ var app = builder.Build();
 // Allow XForwardedFor
 var forwardedHeadersoptions = new ForwardedHeadersOptions
 {
-    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+    ForwardLimit = 5,
 };
 
 // only for demo purposes
@@ -66,14 +67,14 @@ app.UseForwardedHeaders(forwardedHeadersoptions);
 
 // Fly.io specific middleware to set the client IP address
 // https://fly.io/docs/networking/request-headers/
-app.Use(async (context, next) =>
-{
-    if (context.Request.Headers.ContainsKey("Fly-Client-IP") && IPAddress.TryParse(context.Request.Headers["Fly-Client-IP"].ToString(), out var clientIp))
-    {
-        context.Connection.RemoteIpAddress = clientIp;
-    }
-    await next(context);
-});
+//app.Use(async (context, next) =>
+//{
+//    if (context.Request.Headers.ContainsKey("Fly-Client-IP") && IPAddress.TryParse(context.Request.Headers["Fly-Client-IP"].ToString(), out var clientIp))
+//    {
+//        context.Connection.RemoteIpAddress = clientIp;
+//    }
+//    await next(context);
+//});
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
