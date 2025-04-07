@@ -102,6 +102,13 @@ namespace zen_demo_dotnet.Controllers
             return Ok(content);
         }
 
+        [HttpGet("api/client-ip")]
+        public IActionResult GetClientIp()
+        {
+            var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+            return Ok(ip);
+        }
+
         [HttpGet("clear")]
         public async Task<IActionResult> Clear()
         {

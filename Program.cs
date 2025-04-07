@@ -1,3 +1,4 @@
+using System.Net;
 using Aikido.Zen.DotNetCore;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
@@ -46,15 +47,32 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 // Register helpers
 builder.Services.AddScoped<DatabaseHelper>();
-builder.Services.AddSingleton<AppHelpers>();
+builder.Services.AddSingleton<AppHelpers>(); 
 
 // Create app
 var app = builder.Build();
 
 // Allow XForwardedFor
-app.UseForwardedHeaders(new ForwardedHeadersOptions
+var forwardedHeadersoptions = new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+};
+
+// only for demo purposes
+forwardedHeadersoptions.KnownNetworks.Clear();
+forwardedHeadersoptions.KnownProxies.Clear();
+
+app.UseForwardedHeaders(forwardedHeadersoptions);
+
+// Fly.io specific middleware to set the client IP address
+// https://fly.io/docs/networking/request-headers/
+app.Use(async (context, next) =>
+{
+    if (context.Request.Headers.ContainsKey("Fly-Client-IP") && IPAddress.TryParse(context.Request.Headers["Fly-Client-IP"].ToString(), out var clientIp))
+    {
+        context.Connection.RemoteIpAddress = clientIp;
+    }
+    await next(context);
 });
 
 // Configure the HTTP request pipeline.
@@ -64,8 +82,6 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
-app.UseForwardedHeaders();
 app.UseHttpsRedirection();
 app.UseAuthorization();
 
