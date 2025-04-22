@@ -1,0 +1,15 @@
+# fly.toml app configuration file generated for zen-demo-dotnet on 2025-01-29T15:39:45+01:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'zen-demo-dotnet-danger'
+primary_region = 'ams'
+
+[[vm]]
+  memory = '512mb'
+  cpu_kind = 'shared'
+  cpus = 1
+
+[env]
+AIKIDO_DISABLE = 'true'
