@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using zen_demo_dotnet.Models;
 
 namespace zen_demo_dotnet.Helpers
 {
@@ -13,7 +14,7 @@ namespace zen_demo_dotnet.Helpers
             _httpClient = new HttpClient();
         }
 
-        public string ExecuteShellCommand(string command)
+        public CommandResponse ExecuteShellCommand(string command)
         {
             try
             {
@@ -35,12 +36,31 @@ namespace zen_demo_dotnet.Helpers
                 
                 process.WaitForExit();
                 
-                return string.IsNullOrEmpty(error) ? output : error;
+                if (string.IsNullOrEmpty(error))
+                {
+                    return new CommandResponse
+                    {
+                        StatusCode = 200,
+                        Message = output
+                    };
+                }
+                else
+                {
+                    return new CommandResponse
+                    {
+                        StatusCode = 500,
+                        Message = error
+                    };
+                }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error executing shell command");
-                return $"Error: {ex.Message}";
+                return new CommandResponse
+                {
+                    StatusCode = 500,
+                    Message = $"Error: {ex.Message}"
+                };
             }
         }
 

@@ -56,14 +56,14 @@ namespace zen_demo_dotnet.Controllers
             }
 
             var result = _appHelpers.ExecuteShellCommand(request.UserCommand);
-            return Ok(result);
+            return StatusCode(result.StatusCode, result.Message);
         }
 
         [HttpGet("api/execute/{command}")]
         public IActionResult ExecuteCommandGet(string command)
         {
             var result = _appHelpers.ExecuteShellCommand(command);
-            return Ok(result);
+            return StatusCode(result.StatusCode, result.Message);
         }
 
         [HttpPost("api/request")]

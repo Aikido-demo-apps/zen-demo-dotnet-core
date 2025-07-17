@@ -14,4 +14,10 @@ namespace zen_demo_dotnet.Models
     {
         public string? Url { get; set; }
     }
+
+    public class CommandResponse
+    {
+        public int StatusCode { get; set; }
+        public string Message { get; set; } = string.Empty;
+    }
 }
