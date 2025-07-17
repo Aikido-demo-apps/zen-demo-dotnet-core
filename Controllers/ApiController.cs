@@ -75,7 +75,7 @@ namespace zen_demo_dotnet.Controllers
             }
 
             var response = await _appHelpers.MakeHttpRequestAsync(request.Url);
-            return Ok(response);
+            return StatusCode(response.StatusCode, response.Message);
         }
 
         [HttpPost("api/request2")]
@@ -87,7 +87,7 @@ namespace zen_demo_dotnet.Controllers
             }
 
             var response = await _appHelpers.MakeHttpRequestAsync(request.Url);
-            return Ok(response);
+            return StatusCode(response.StatusCode, response.Message);
         }
 
         [HttpGet("api/read")]
@@ -98,8 +98,8 @@ namespace zen_demo_dotnet.Controllers
                 return BadRequest("Path is required");
             }
 
-            var content = _appHelpers.ReadFile(path);
-            return Ok(content);
+            var response = _appHelpers.ReadFile(path);
+            return StatusCode(response.StatusCode, response.Message);
         }
 
         [HttpGet("api/client-ip")]

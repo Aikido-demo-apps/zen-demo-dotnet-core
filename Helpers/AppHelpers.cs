@@ -1,5 +1,7 @@
 using System.Diagnostics;
 using zen_demo_dotnet.Models;
+using Aikido.Zen.Core.Exceptions;
+
 
 namespace zen_demo_dotnet.Helpers
 {
@@ -14,7 +16,7 @@ namespace zen_demo_dotnet.Helpers
             _httpClient = new HttpClient();
         }
 
-        public CommandResponse ExecuteShellCommand(string command)
+        public AppResponse ExecuteShellCommand(string command)
         {
             try
             {
@@ -36,50 +38,67 @@ namespace zen_demo_dotnet.Helpers
                 
                 process.WaitForExit();
                 
-                if (string.IsNullOrEmpty(error))
+                return new AppResponse
                 {
-                    return new CommandResponse
-                    {
-                        StatusCode = 200,
-                        Message = output
-                    };
-                }
-                else
-                {
-                    return new CommandResponse
-                    {
-                        StatusCode = 500,
-                        Message = error
-                    };
-                }
+                    StatusCode = 200,
+                    Message = output
+                };
+                
             }
-            catch (Exception ex)
+            catch (AikidoException ex)
             {
                 _logger.LogError(ex, "Error executing shell command");
-                return new CommandResponse
+                return new AppResponse
                 {
                     StatusCode = 500,
                     Message = $"Error: {ex.Message}"
                 };
             }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error executing shell command");
+                return new AppResponse
+                {
+                    StatusCode = 400,
+                    Message = $"Error: {ex.Message}"
+                };
+            }
         }
 
-        public async Task<string> MakeHttpRequestAsync(string url)
+        public async Task<AppResponse> MakeHttpRequestAsync(string url)
         {
             try
             {
                 var response = await _httpClient.GetAsync(url);
                 response.EnsureSuccessStatusCode();
-                return await response.Content.ReadAsStringAsync();
+                var content = await response.Content.ReadAsStringAsync();
+                return new AppResponse
+                {
+                    StatusCode = 200,
+                    Message = content
+                };
+            }
+            catch (AikidoException ex)
+            {
+                _logger.LogError(ex, "Error making HTTP request");
+                return new AppResponse
+                {
+                    StatusCode = 500,
+                    Message = $"Error: {ex.Message}"
+                };
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error making HTTP request");
-                return $"Error: {ex.Message}";
+                return new AppResponse
+                {
+                    StatusCode = 400,
+                    Message = $"Error: {ex.Message}"
+                };
             }
         }
 
-        public string ReadFile(string filePath)
+        public AppResponse ReadFile(string filePath)
         {
             try
             {
@@ -88,14 +107,36 @@ namespace zen_demo_dotnet.Helpers
                 
                 if (File.Exists(fullPath))
                 {
-                    return File.ReadAllText(fullPath);
+                    var content = File.ReadAllText(fullPath);
+                    return new AppResponse
+                    {
+                        StatusCode = 200,
+                        Message = content
+                    };
                 }
-                return "File not found";
+                return new AppResponse
+                {
+                    StatusCode = 404,
+                    Message = "File not found"
+                };
+            }
+            catch (AikidoException ex)
+            {
+                _logger.LogError(ex, "Error reading file");
+                return new AppResponse
+                {
+                    StatusCode = 500,
+                    Message = $"Error: {ex.Message}"
+                };
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error reading file");
-                return $"Error: {ex.Message}";
+                return new AppResponse
+                {
+                    StatusCode = 400,
+                    Message = $"Error: {ex.Message}"
+                };
             }
         }
     }
