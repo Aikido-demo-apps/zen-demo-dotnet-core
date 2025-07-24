@@ -20,7 +20,7 @@ namespace zen_demo_dotnet.Controllers
         /// </summary>
         /// <param name="request">The request containing the message and provider.</param>
         /// <returns>An IActionResult containing the LLM's response.</returns>
-        [HttpPost("api/test_llm")]
+        [HttpPost("test_llm")]
         public async Task<IActionResult> TestLlm([FromBody] LlmRequest request)
         {
             if (string.IsNullOrEmpty(request.Message))
