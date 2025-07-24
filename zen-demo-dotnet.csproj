@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aikido.Zen.DotNetCore" Version="1.2.16-beta1" />
+    <PackageReference Include="Aikido.Zen.DotNetCore" Version="1.2.16" />
     <!-- Add fallback packages in case we need to disable Zen -->
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.2" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.0" />
