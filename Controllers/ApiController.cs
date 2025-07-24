@@ -91,11 +91,11 @@ namespace zen_demo_dotnet.Controllers
         }
 
         [HttpGet("api/read")]
-        public IActionResult ReadFile([FromQuery] string path)
+        public IActionResult ReadFile([FromQuery] string? path = null)
         {
             if (string.IsNullOrEmpty(path))
             {
-                return BadRequest("Path is required");
+                return StatusCode(500, "Path is required");
             }
 
             var response = _appHelpers.ReadFile(path);
