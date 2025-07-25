@@ -116,7 +116,7 @@ namespace zen_demo_dotnet.Helpers
                 }
                 return new AppResponse
                 {
-                    StatusCode = 404,
+                    StatusCode = 500,
                     Message = "File not found"
                 };
             }
