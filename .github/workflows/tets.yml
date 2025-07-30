@@ -20,7 +20,7 @@ jobs:
       - name:  Run Firewall QA Tests
         uses: AikidoSec/firewall-tester-action@04eb575ab9ccc84a34b64017262ed22d152d68cf
         with:
-          dockerfile_path: ./
+          dockerfile_path: ./Dockerfile
           sleep_before_test: 15
           max_parallel_tests: 5
           skip_tests: test_ssrf,test_api_spec
