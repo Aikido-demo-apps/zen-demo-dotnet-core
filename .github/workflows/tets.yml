@@ -1,0 +1,26 @@
+name: Test
+on:
+  push:
+    branches:
+      - main
+      - dev-testing
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Dotnet Tests 
+    runs-on: ubuntu-latest
+    steps:
+      
+      - name: Checkout action
+        id: checkout
+        uses: actions/checkout@v4
+
+      - name:  Run Firewall QA Tests
+        uses: AikidoSec/firewall-tester-action@release/v1
+        with:
+          dockerfile_path: ./
+          sleep_before_test: 15
+          max_parallel_tests: 5
+          skip_tests: test_ssrf,test_api_spec
