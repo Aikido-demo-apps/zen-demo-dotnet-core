@@ -16,6 +16,8 @@ jobs:
       - name: Checkout action
         id: checkout
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name:  Run Firewall QA Tests
         uses: AikidoSec/firewall-tester-action@releases/v1
