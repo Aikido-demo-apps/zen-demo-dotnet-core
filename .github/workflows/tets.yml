@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name:  Run Firewall QA Tests
-        uses: AikidoSec/firewall-tester-action@04eb575ab9ccc84a34b64017262ed22d152d68cf
+        uses: AikidoSec/firewall-tester-action@releases/v1
         with:
           dockerfile_path: ./Dockerfile
           sleep_before_test: 15
