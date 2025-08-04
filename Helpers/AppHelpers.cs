@@ -139,5 +139,49 @@ namespace zen_demo_dotnet.Helpers
                 };
             }
         }
+
+        public AppResponse ReadFile2(string filePath)
+        {
+            try
+            {
+                // Construct the full path within the wwwroot/blogs directory
+                //  string fullPath = Path.Combine("wwwroot/blogs", filePath);
+                Uri baseUri = new Uri("file://wwwroot/blogs");
+                string fullPath = new Uri(baseUri, filePath).LocalPath;
+                
+                if (File.Exists(fullPath))
+                {
+                    var content = File.ReadAllText(fullPath);
+                    return new AppResponse
+                    {
+                        StatusCode = 200,
+                        Message = content
+                    };
+                }
+                return new AppResponse
+                {
+                    StatusCode = 500,
+                    Message = "File not found"
+                };
+            }
+            catch (AikidoException ex)
+            {
+                _logger.LogError(ex, "Error reading file");
+                return new AppResponse
+                {
+                    StatusCode = 500,
+                    Message = $"Error: {ex.Message}"
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error reading file");
+                return new AppResponse
+                {
+                    StatusCode = 400,
+                    Message = $"Error: {ex.Message}"
+                };
+            }
+        }
     }
 }

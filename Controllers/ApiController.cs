@@ -102,6 +102,18 @@ namespace zen_demo_dotnet.Controllers
             return StatusCode(response.StatusCode, response.Message);
         }
 
+        [HttpGet("api/read2")]
+        public IActionResult ReadFile2([FromQuery] string? path = null)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                return StatusCode(500, "Path is required");
+            }
+
+            var response = _appHelpers.ReadFile2(path);
+            return StatusCode(response.StatusCode, response.Message);
+        }
+
         [HttpGet("api/client-ip")]
         public IActionResult GetClientIp()
         {
