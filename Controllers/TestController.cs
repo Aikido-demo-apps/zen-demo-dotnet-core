@@ -36,5 +36,11 @@ namespace zen_demo_dotnet.Controllers
             Request.Headers.TryGetValue("user", out var user);
             return Content($"Hello endpoint with route parameter: {id}");
         }
+
+        [HttpPost("test_llm")]
+        public IActionResult PostTestLlm()
+        {
+            return Content("Demo feature not implemented", "text/plain");
+        }
     }
 }
