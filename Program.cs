@@ -1,7 +1,9 @@
 using System.Net;
+using Aikido.Zen.Core;
 using Aikido.Zen.DotNetCore;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using zen_demo_dotnet;
 using zen_demo_dotnet.Data;
 using zen_demo_dotnet.Helpers;
@@ -12,6 +14,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add zen services
 builder.Services.AddZenFirewall();
+
+// Add health checks
+builder.Services.AddHealthChecks()
+    .AddCheck("Zen firewall reporting status", () => Zen.Status().Heartbeat switch
+    {
+        ReportingStatusResult.Ok => HealthCheckResult.Healthy("Zen firewall is reporting heartbeats successfully."),
+        ReportingStatusResult.NotReported => HealthCheckResult.Degraded("Zen firewall has not reported heartbeats yet."),
+        ReportingStatusResult.Expired => HealthCheckResult.Degraded("Zen firewall heartbeat reports have expired."),
+        ReportingStatusResult.Failure => HealthCheckResult.Unhealthy("Zen firewall is not reporting heartbeats successfully."),
+        _ => HealthCheckResult.Unhealthy("Unknown Zen firewall heartbeat status.")
+    });
+
 //add other services
 builder.Services.AddRazorPages();
 builder.Services.AddControllers();
@@ -128,6 +142,7 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseTestingMiddleware(); // used to test unregistered routes
 app.UsePublicFallback();
+app.MapHealthChecks("/healthz");
 app.MapRazorPages();
 app.MapControllers();
 
