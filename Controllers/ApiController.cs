@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using zen_demo_dotnet.Data;
 using zen_demo_dotnet.Helpers;
 using zen_demo_dotnet.Models;
+using System.Text.RegularExpressions;
 
 namespace zen_demo_dotnet.Controllers
 {
@@ -87,6 +88,23 @@ namespace zen_demo_dotnet.Controllers
             }
 
             var response = await _appHelpers.MakeHttpRequestAsync(request.Url);
+            return StatusCode(response.StatusCode, response.Message);
+        }
+
+        [HttpPost("api/request_different_port")]
+        public async Task<IActionResult> MakeRequestDifferentPort([FromBody] RequestRequest request)
+        {
+            if (string.IsNullOrEmpty(request.Url))
+            {
+                return BadRequest("URL is required");
+            }
+            if (string.IsNullOrEmpty(request.Port))
+            {
+                return BadRequest("Port is required");
+            }
+            var newUrl = Regex.Replace(request.Url, @":\d+", ":" + request.Port);
+            
+            var response = await _appHelpers.MakeHttpRequestAsync(newUrl);
             return StatusCode(response.StatusCode, response.Message);
         }
 
