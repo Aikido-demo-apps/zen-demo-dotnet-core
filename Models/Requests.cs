@@ -13,6 +13,7 @@ namespace zen_demo_dotnet.Models
     public class RequestRequest
     {
         public string? Url { get; set; }
+        public string? Port { get; set; }
     }
 
     public class AppResponse
