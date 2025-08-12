@@ -26,7 +26,7 @@ namespace zen_demo_dotnet.Data
             try
             {
                 // Using raw SQL query with direct string concatenation to allow SQL injection
-                string sql = $"INSERT INTO \"Pets\" (\"Name\", \"Owner\") VALUES ('{name}', 'Aikido')";
+                string sql = $"INSERT INTO \"Pets\" (\"Name\", \"Owner\") VALUES ('{name}', 'Aikido Security')";
                 return await _context.Database.ExecuteSqlRawAsync(sql);
             }
             catch (Exception ex)
