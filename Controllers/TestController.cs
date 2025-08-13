@@ -36,5 +36,6 @@ namespace zen_demo_dotnet.Controllers
             Request.Headers.TryGetValue("user", out var user);
             return Content($"Hello endpoint with route parameter: {id}");
         }
+
     }
 }
