@@ -30,6 +30,17 @@ namespace zen_demo_dotnet.Controllers
             return Ok(pets);
         }
 
+        [HttpGet("api/pets/{id}")]
+        public async Task<IActionResult> GetPetById(string id)
+        {
+            var pet = await _databaseHelper.GetPetByIdAsync(id);
+            if (pet == null)
+            {
+                return NotFound(new { error = "Pet not found" });
+            }
+            return Ok(pet);
+        }
+
         [HttpPost("api/create")]
         public async Task<IActionResult> CreatePet([FromBody] CreateRequest request)
         {
@@ -90,6 +101,23 @@ namespace zen_demo_dotnet.Controllers
             return Ok(response);
         }
 
+        [HttpPost("api/request_different_port")]
+        public async Task<IActionResult> MakeRequestDifferentPort([FromBody] RequestDifferentPortRequest request)
+        {
+            if (string.IsNullOrEmpty(request.Url))
+            {
+                return BadRequest("URL is required");
+            }
+
+            if (request.Port == 0)
+            {
+                return BadRequest("Port is required");
+            }
+
+            var response = await _appHelpers.MakeHttpRequestDifferentPortAsync(request.Url, request.Port);
+            return Ok(response);
+        }
+
         [HttpGet("api/read")]
         public IActionResult ReadFile([FromQuery] string path)
         {
@@ -99,6 +127,18 @@ namespace zen_demo_dotnet.Controllers
             }
 
             var content = _appHelpers.ReadFile(path);
+            return Ok(content);
+        }
+
+        [HttpGet("api/read2")]
+        public IActionResult ReadFile2([FromQuery] string path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                return BadRequest("Path is required");
+            }
+
+            var content = _appHelpers.ReadFile2(path);
             return Ok(content);
         }
 
