@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Aikido.Zen.Core.Exceptions;
 
 namespace zen_demo_dotnet.Helpers
 {
@@ -37,6 +38,11 @@ namespace zen_demo_dotnet.Helpers
                 
                 return string.IsNullOrEmpty(error) ? output : error;
             }
+            catch (AikidoException)
+            {
+                // Let Aikido exceptions bubble up to be handled by middleware
+                throw;
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error executing shell command");
@@ -72,6 +78,11 @@ namespace zen_demo_dotnet.Helpers
                 }
                 return "File not found";
             }
+            catch (AikidoException)
+            {
+                // Let Aikido exceptions bubble up to be handled by middleware
+                throw;
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error reading file");
@@ -91,6 +102,11 @@ namespace zen_demo_dotnet.Helpers
                     return File.ReadAllText(fullPath);
                 }
                 return "File not found";
+            }
+            catch (AikidoException)
+            {
+                // Let Aikido exceptions bubble up to be handled by middleware
+                throw;
             }
             catch (Exception ex)
             {
@@ -113,6 +129,11 @@ namespace zen_demo_dotnet.Helpers
                 var response = await _httpClient.GetAsync(uriBuilder.Uri);
                 response.EnsureSuccessStatusCode();
                 return await response.Content.ReadAsStringAsync();
+            }
+            catch (AikidoException)
+            {
+                // Let Aikido exceptions bubble up to be handled by middleware
+                throw;
             }
             catch (Exception ex)
             {
