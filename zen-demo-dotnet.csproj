@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aikido.Zen.DotNetCore" Version="1.2.19" />
+    <PackageReference Include="Aikido.Zen.DotNetCore" Version="1.2.20" />
     <PackageReference Include="Anthropic.SDK" Version="5.4.3" />
     <!-- Add fallback packages in case we need to disable Zen -->
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.2" />
