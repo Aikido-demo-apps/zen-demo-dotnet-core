@@ -14,4 +14,10 @@ namespace zen_demo_dotnet.Models
     {
         public string? Url { get; set; }
     }
+
+    public class RequestDifferentPortRequest
+    {
+        public string? Url { get; set; }
+        public int Port { get; set; }
+    }
 }
