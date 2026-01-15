@@ -29,4 +29,4 @@ EXPOSE 8080
 WORKDIR /app
 COPY --from=build /app .
 
-ENTRYPOINT ["/usr/bin/tini", "--", "dotnet zen-demo-dotnet.dll"]
+ENTRYPOINT ["/usr/bin/tini", "--", "dotnet /app/zen-demo-dotnet.dll"]
