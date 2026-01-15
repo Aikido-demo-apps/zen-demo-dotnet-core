@@ -19,10 +19,14 @@ FROM mcr.microsoft.com/dotnet/aspnet:${DOTNET_SDK_VERSION}
 RUN apt-get update && apt-get install -y curl
 RUN curl -sSL https://aka.ms/getvsdbgsh | bash /dev/stdin -v latest -l /vsdbg
 
+# tini
+RUN apt-get install -y tini
+
 ENV ASPNETCORE_URLS http://+:8080
 ENV ASPNETCORE_ENVIRONMENT Production
 ENV AIKIDO_BLOCK true
 EXPOSE 8080
 WORKDIR /app
 COPY --from=build /app .
-ENTRYPOINT [ "dotnet", "zen-demo-dotnet.dll" ]
+
+ENTRYPOINT ["/usr/bin/tini", "--", "dotnet zen-demo-dotnet.dll"]
