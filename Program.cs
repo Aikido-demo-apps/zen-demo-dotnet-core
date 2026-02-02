@@ -148,6 +148,9 @@ app.Use((context, next) =>
     return next();
 });
 
+// Important: UseRouting must come before UseZenFirewall to ensure we receive all context information
+app.UseRouting();
+
 // Enable Zen
 try
 {
@@ -160,7 +163,6 @@ catch (Exception e)
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
-app.UseRouting();
 app.UseTestingMiddleware(); // used to test unregistered routes
 app.UsePublicFallback();
 app.MapHealthChecks("/healthz");
