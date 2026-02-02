@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Aikido.Zen.Core.Exceptions;
 
 namespace zen_demo_dotnet.Helpers
 {
@@ -37,6 +38,11 @@ namespace zen_demo_dotnet.Helpers
                 
                 return string.IsNullOrEmpty(error) ? output : error;
             }
+            catch (AikidoException)
+            {
+                // Let Aikido exceptions bubble up to be handled by middleware
+                throw;
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error executing shell command");
@@ -65,16 +71,73 @@ namespace zen_demo_dotnet.Helpers
             {
                 // Construct the full path within the wwwroot/blogs directory
                 string fullPath = Path.Combine("wwwroot/blogs", filePath);
-                
+
                 if (File.Exists(fullPath))
                 {
                     return File.ReadAllText(fullPath);
                 }
                 return "File not found";
             }
+            catch (AikidoException)
+            {
+                // Let Aikido exceptions bubble up to be handled by middleware
+                throw;
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error reading file");
+                return $"Error: {ex.Message}";
+            }
+        }
+
+        public string ReadFile2(string filePath)
+        {
+            try
+            {
+                // Use Path.GetFullPath to resolve the path (similar to path.resolve in Node.js)
+                string fullPath = Path.GetFullPath(Path.Combine("wwwroot/blogs", filePath));
+
+                if (File.Exists(fullPath))
+                {
+                    return File.ReadAllText(fullPath);
+                }
+                return "File not found";
+            }
+            catch (AikidoException)
+            {
+                // Let Aikido exceptions bubble up to be handled by middleware
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error reading file");
+                return $"Error: {ex.Message}";
+            }
+        }
+
+        public async Task<string> MakeHttpRequestDifferentPortAsync(string url, int port)
+        {
+            try
+            {
+                // Replace the port in the URL
+                var uri = new Uri(url);
+                var uriBuilder = new UriBuilder(uri)
+                {
+                    Port = port
+                };
+
+                var response = await _httpClient.GetAsync(uriBuilder.Uri);
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadAsStringAsync();
+            }
+            catch (AikidoException)
+            {
+                // Let Aikido exceptions bubble up to be handled by middleware
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error making HTTP request with different port");
                 return $"Error: {ex.Message}";
             }
         }

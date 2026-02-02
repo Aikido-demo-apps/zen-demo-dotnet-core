@@ -21,12 +21,27 @@ namespace zen_demo_dotnet.Data
             return pets;
         }
 
+        public async Task<Pet?> GetPetByIdAsync(string id)
+        {
+            try
+            {
+                // Using parameterized query for safety
+                var pets = await _context.Pets.FromSqlRaw($"SELECT 'Id', 'Name', 'Owner' FROM 'Pets' WHERE 'Id' = {id}").ToListAsync();
+                return pets.FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Database error occurred: {ex.Message}");
+                return null;
+            }
+        }
+
         public async Task<int> CreatePetByNameAsync(string name)
         {
             try
             {
                 // Using raw SQL query with direct string concatenation to allow SQL injection
-                string sql = $"INSERT INTO \"Pets\" (\"Name\", \"Owner\") VALUES ('{name}', 'Aikido')";
+                string sql = $"INSERT INTO \"Pets\" (\"Name\", \"Owner\") VALUES ('{name}', 'Aikido Security')";
                 return await _context.Database.ExecuteSqlRawAsync(sql);
             }
             catch (Exception ex)
