@@ -5,6 +5,8 @@ namespace zen_demo_dotnet.Helpers
 {
     public class AppHelpers
     {
+        private const int MaxDecodeUriPasses = 2;
+
         private readonly ILogger<AppHelpers> _logger;
         private readonly HttpClient _httpClient;
 
@@ -16,6 +18,8 @@ namespace zen_demo_dotnet.Helpers
 
         public string ExecuteShellCommand(string command)
         {
+            command = DecodeUriComponent(command);
+
             try
             {
                 var processInfo = new ProcessStartInfo
@@ -140,6 +144,29 @@ namespace zen_demo_dotnet.Helpers
                 _logger.LogError(ex, "Error making HTTP request with different port");
                 return $"Error: {ex.Message}";
             }
+        }
+
+        private static string DecodeUriComponent(string input)
+        {
+            string decoded = input;
+
+            if (string.IsNullOrEmpty(input))
+            {
+                return decoded;
+            }
+
+            for (int i = 0; i < MaxDecodeUriPasses; i++)
+            {
+                string next = Uri.UnescapeDataString(decoded);
+                if (next == decoded)
+                {
+                    break;
+                }
+
+                decoded = next;
+            }
+
+            return decoded;
         }
     }
 }
