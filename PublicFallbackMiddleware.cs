@@ -64,6 +64,8 @@ public class PublicFallbackMiddleware
             ".gif" => "image/gif",
             ".svg" => "image/svg+xml",
             ".ico" => "image/x-icon",
+            ".otf" => "font/otf",
+
             _ => "application/octet-stream",
         };
     }
