@@ -62,6 +62,11 @@ namespace zen_demo_dotnet.Helpers
                 response.EnsureSuccessStatusCode();
                 return await response.Content.ReadAsStringAsync();
             }
+            catch (AikidoException)
+            {
+                // Let Aikido exceptions bubble up to be handled by middleware
+                throw;
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error making HTTP request");

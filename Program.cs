@@ -151,7 +151,7 @@ try
 }
 catch (Exception e)
 {
-    Console.WriteLine("Aikido does not run on ARM chips", e);
+    Console.WriteLine(e.ToString());
 }
 
 app.UseDefaultFiles();
