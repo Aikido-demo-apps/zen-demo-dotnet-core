@@ -37,41 +37,34 @@ namespace zen_demo_dotnet.Controllers
 
             var response = "Unknown provider";
 
-            try
+            if (request.Provider == "openai")
             {
-                if (request.Provider == "openai")
+                var openAiClient = new ChatClient("gpt-3.5-turbo", Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
+                var messages = new List<ChatMessage>
                 {
-                    var openAiClient = new ChatClient("gpt-3.5-turbo", Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
-                    var messages = new List<ChatMessage>
-                    {
-                        new SystemChatMessage(prompt),
-                        new UserChatMessage(request.Message)
-                    };
-                    var chatResult = await openAiClient.CompleteChatAsync(messages);
-                    response = chatResult.Value.Content.First().Text;
-                }
-                else if (request.Provider == "anthropic")
-                {
-                    var anthropicClient = new Anthropic.SDK.AnthropicClient();
-                    var messages = new List<Anthropic.SDK.Messaging.Message>
-                    {
-                        new Anthropic.SDK.Messaging.Message(Anthropic.SDK.Messaging.RoleType.User, request.Message),
-                    };
-                    var parameters = new Anthropic.SDK.Messaging.MessageParameters()
-                    {
-                        Messages = messages,
-                        MaxTokens = 512,
-                        Model = Anthropic.SDK.Constants.AnthropicModels.Claude35Sonnet,
-                        Stream = false,
-                        System = [new Anthropic.SDK.Messaging.SystemMessage(prompt)],
-                    };
-                    var res = await anthropicClient.Messages.GetClaudeMessageAsync(parameters);
-                    response = res.Message.ToString();
-                }
+                    new SystemChatMessage(prompt),
+                    new UserChatMessage(request.Message)
+                };
+                var chatResult = await openAiClient.CompleteChatAsync(messages);
+                response = chatResult.Value.Content.First().Text;
             }
-            catch (System.Exception e)
+            else if (request.Provider == "anthropic")
             {
-                return StatusCode(500, e.Message);
+                var anthropicClient = new Anthropic.SDK.AnthropicClient();
+                var messages = new List<Anthropic.SDK.Messaging.Message>
+                {
+                    new Anthropic.SDK.Messaging.Message(Anthropic.SDK.Messaging.RoleType.User, request.Message),
+                };
+                var parameters = new Anthropic.SDK.Messaging.MessageParameters()
+                {
+                    Messages = messages,
+                    MaxTokens = 512,
+                    Model = Anthropic.SDK.Constants.AnthropicModels.Claude35Sonnet,
+                    Stream = false,
+                    System = [new Anthropic.SDK.Messaging.SystemMessage(prompt)],
+                };
+                var res = await anthropicClient.Messages.GetClaudeMessageAsync(parameters);
+                response = res.Message.ToString();
             }
 
             return Ok(response);

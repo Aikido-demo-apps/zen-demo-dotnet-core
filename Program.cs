@@ -90,7 +90,7 @@ app.UseForwardedHeaders(forwardedHeadersoptions);
 //    await next(context);
 //});
 
-// Catch Aikido exceptions and return 500 status code
+// Catch Aikido exceptions and other unhandled exceptions and return 500 status code
 // This matches the behavior of other demo apps (Node.js, Python, etc.)
 // Must be before UseExceptionHandler to catch AikidoException first
 app.Use(async (context, next) =>
@@ -99,8 +99,9 @@ app.Use(async (context, next) =>
     {
         await next();
     }
-    catch (Aikido.Zen.Core.Exceptions.AikidoException ex)
+    catch (Exception ex)
     {
+        app.Logger.LogError(ex, "Unhandled exception for {Method} {Path}", context.Request.Method, context.Request.Path);
         context.Response.StatusCode = 500;
         context.Response.ContentType = "application/json";
         await context.Response.WriteAsync(System.Text.Json.JsonSerializer.Serialize(new

@@ -23,44 +23,16 @@ namespace zen_demo_dotnet.Data
 
         public async Task<Pet?> GetPetByIdAsync(string id)
         {
-            try
-            {
-                // Using parameterized query for safety
-                var pets = await _context.Pets.FromSqlRaw($"SELECT 'Id', 'Name', 'Owner' FROM 'Pets' WHERE 'Id' = {id}").ToListAsync();
-                return pets.FirstOrDefault();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Database error occurred: {ex.Message}");
-                return null;
-            }
+            // Using parameterized query for safety
+            var pets = await _context.Pets.FromSqlRaw($"SELECT 'Id', 'Name', 'Owner' FROM 'Pets' WHERE 'Id' = {id}").ToListAsync();
+            return pets.FirstOrDefault();
         }
 
         public async Task<int> CreatePetByNameAsync(string name)
         {
-            try
-            {
-                // Using raw SQL query with direct string concatenation to allow SQL injection
-                string sql = $"INSERT INTO \"Pets\" (\"Name\", \"Owner\") VALUES ('{name}', 'Aikido Security')";
-                return await _context.Database.ExecuteSqlRawAsync(sql);
-            }
-            catch (Exception ex)
-            {
-                // Log the exception to see the error details
-                Console.WriteLine($"SQL Error: {ex.Message}");
-
-                // If there's an inner exception, log that too
-                if (ex.InnerException != null)
-                {
-                    Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
-                }
-
-                // Log the stack trace for debugging
-                Console.WriteLine($"Stack trace: {ex.StackTrace}");
-
-                // Rethrow to make sure it's visible in application logs
-                throw;
-            }
+            // Using raw SQL query with direct string concatenation to allow SQL injection
+            string sql = $"INSERT INTO \"Pets\" (\"Name\", \"Owner\") VALUES ('{name}', 'Aikido Security')";
+            return await _context.Database.ExecuteSqlRawAsync(sql);
         }
 
         public async Task ClearAllAsync()
