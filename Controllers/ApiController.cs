@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using zen_demo_dotnet.Data;
 using zen_demo_dotnet.Helpers;
 using zen_demo_dotnet.Models;
@@ -120,9 +119,9 @@ namespace zen_demo_dotnet.Controllers
         }
 
         [HttpPost("api/stored_ssrf")]
-        public async Task<IActionResult> StoredSsrf([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] StoredSsrfRequest? request)
+        public async Task<IActionResult> StoredSsrf([FromBody] StoredSsrfRequest request)
         {
-            var response = await _appHelpers.MakeStoredSsrfRequestAsync(request?.UrlIndex);
+            var response = await _appHelpers.MakeStoredSsrfRequestAsync(request.UrlIndex);
             if (response.StartsWith("Error:", StringComparison.Ordinal))
             {
                 return BadRequest(new
