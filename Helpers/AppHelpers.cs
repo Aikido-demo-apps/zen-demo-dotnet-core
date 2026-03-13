@@ -69,7 +69,7 @@ namespace zen_demo_dotnet.Helpers
 
         public Task<string> MakeStoredSsrfRequestAsync(int? urlIndex)
         {
-            int resolvedIndex = ((urlIndex ?? 0) % StoredSsrfUrls.Length + StoredSsrfUrls.Length) % StoredSsrfUrls.Length;
+            int resolvedIndex = (urlIndex ?? 0) % StoredSsrfUrls.Length;
             return MakeHttpRequestAsync(StoredSsrfUrls[resolvedIndex]);
         }
 
