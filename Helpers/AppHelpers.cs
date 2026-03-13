@@ -19,8 +19,9 @@ namespace zen_demo_dotnet.Helpers
         private readonly HttpClient _httpClient;
         private readonly ConcurrentDictionary<string, byte> _storedSsrfUrls = new(StringComparer.OrdinalIgnoreCase);
 
-        public AppHelpers()
+        public AppHelpers(ILogger<AppHelpers> logger)
         {
+            _logger = logger;
             _httpClient = new HttpClient();
         }
 
