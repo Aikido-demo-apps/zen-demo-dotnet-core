@@ -20,4 +20,9 @@ namespace zen_demo_dotnet.Models
         public string? Url { get; set; }
         public int Port { get; set; }
     }
+
+    public class StoredSsrfRequest
+    {
+        public int? UrlIndex { get; set; }
+    }
 }

@@ -118,6 +118,37 @@ namespace zen_demo_dotnet.Controllers
             return Ok(response);
         }
 
+        [HttpPost("api/stored_ssrf")]
+        public async Task<IActionResult> StoredSsrf([FromBody] StoredSsrfRequest request)
+        {
+            var response = await _appHelpers.MakeStoredSsrfRequestAsync(request.UrlIndex);
+            if (response.StartsWith("Error:", StringComparison.Ordinal))
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    output = response
+                });
+            }
+
+            return Ok(new
+            {
+                success = true,
+                output = response
+            });
+        }
+
+        [HttpPost("api/stored_ssrf_2")]
+        public IActionResult StoredSsrf2()
+        {
+            _appHelpers.QueueStoredSsrfRequest();
+            return Ok(new
+            {
+                success = true,
+                output = "Request successful (Stored SSRF 2)"
+            });
+        }
+
         [HttpGet("api/read")]
         public IActionResult ReadFile([FromQuery] string path)
         {

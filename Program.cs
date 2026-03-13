@@ -62,6 +62,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Register helpers
 builder.Services.AddScoped<DatabaseHelper>();
 builder.Services.AddSingleton<AppHelpers>(); 
+builder.Services.AddHostedService<StoredSsrfBackgroundService>();
 
 // Create app
 var app = builder.Build();

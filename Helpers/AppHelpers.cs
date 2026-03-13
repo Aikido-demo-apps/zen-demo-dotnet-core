@@ -1,12 +1,21 @@
+using System.Collections.Concurrent;
 using System.Diagnostics;
 
 namespace zen_demo_dotnet.Helpers
 {
     public class AppHelpers
     {
-        private const int MaxDecodeUriPasses = 2;
+        private static readonly string[] StoredSsrfUrls =
+        {
+            "http://evil-stored-ssrf-hostname/latest/api/token",
+            "http://metadata.google.internal/latest/api/token",
+            "http://metadata.goog/latest/api/token",
+            "http://169.254.169.254/latest/api/token",
+        };
 
+        private readonly ILogger<AppHelpers> _logger;
         private readonly HttpClient _httpClient;
+        private readonly ConcurrentDictionary<string, byte> _storedSsrfUrls = new(StringComparer.OrdinalIgnoreCase);
 
         public AppHelpers()
         {
@@ -40,9 +49,65 @@ namespace zen_demo_dotnet.Helpers
 
         public async Task<string> MakeHttpRequestAsync(string url)
         {
-            var response = await _httpClient.GetAsync(url);
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadAsStringAsync();
+            try
+            {
+                var response = await _httpClient.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadAsStringAsync();
+            }
+            catch (AikidoException)
+            {
+                // Let Aikido exceptions bubble up to be handled by middleware
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error making HTTP request");
+                return $"Error: {ex.Message}";
+            }
+        }
+
+        public Task<string> MakeStoredSsrfRequestAsync(int? urlIndex)
+        {
+            int resolvedIndex = (urlIndex ?? 0) % StoredSsrfUrls.Length;
+            return MakeHttpRequestAsync(StoredSsrfUrls[resolvedIndex]);
+        }
+
+        public void QueueStoredSsrfRequest()
+        {
+            _storedSsrfUrls.TryAdd(StoredSsrfUrls[0], 0);
+        }
+
+        public async Task ProcessStoredSsrfQueueAsync(CancellationToken cancellationToken)
+        {
+            if (_storedSsrfUrls.IsEmpty)
+            {
+                return;
+            }
+
+            _logger.LogInformation("Running stored SSRF check at {Timestamp}", DateTimeOffset.UtcNow);
+
+            foreach (string url in _storedSsrfUrls.Keys)
+            {
+                try
+                {
+                    var response = await _httpClient.GetAsync(url, cancellationToken);
+                    await response.Content.ReadAsStringAsync(cancellationToken);
+                    _logger.LogInformation("Fetched {Url} (status: {StatusCode})", url, (int)response.StatusCode);
+                }
+                catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error fetching stored SSRF URL {Url}", url);
+                }
+                finally
+                {
+                    _storedSsrfUrls.TryRemove(url, out _);
+                }
+            }
         }
 
         public string ReadFile(string filePath)
