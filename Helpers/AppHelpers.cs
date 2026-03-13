@@ -5,6 +5,8 @@ namespace zen_demo_dotnet.Helpers
 {
     public class AppHelpers
     {
+        private const int MaxDecodeUriPasses = 2;
+
         private static readonly string[] StoredSsrfUrls =
         {
             "http://evil-stored-ssrf-hostname/latest/api/token",
@@ -49,22 +51,9 @@ namespace zen_demo_dotnet.Helpers
 
         public async Task<string> MakeHttpRequestAsync(string url)
         {
-            try
-            {
-                var response = await _httpClient.GetAsync(url);
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadAsStringAsync();
-            }
-            catch (AikidoException)
-            {
-                // Let Aikido exceptions bubble up to be handled by middleware
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error making HTTP request");
-                return $"Error: {ex.Message}";
-            }
+            var response = await _httpClient.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
         }
 
         public Task<string> MakeStoredSsrfRequestAsync(int? urlIndex)
