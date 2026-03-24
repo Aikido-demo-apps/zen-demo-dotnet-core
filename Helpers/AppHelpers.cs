@@ -25,7 +25,7 @@ namespace zen_demo_dotnet.Helpers
             _httpClient = new HttpClient();
         }
 
-        public string ExecuteShellCommand(string command)
+        public int ExecuteShellCommand(string command, out string output)
         {
             command = DecodeUriComponent(command);
 
@@ -42,12 +42,13 @@ namespace zen_demo_dotnet.Helpers
             using var process = new Process { StartInfo = processInfo };
             process.Start();
                 
-            string output = process.StandardOutput.ReadToEnd();
-            string error = process.StandardError.ReadToEnd();
+            string stdout = process.StandardOutput.ReadToEnd();
+            string stderr = process.StandardError.ReadToEnd();
                 
             process.WaitForExit();
-                
-            return string.IsNullOrEmpty(error) ? output : error;
+            output = string.IsNullOrEmpty(stderr) ? stdout : stderr;
+
+            return process.ExitCode;
         }
 
         public async Task<string> MakeHttpRequestAsync(string url)

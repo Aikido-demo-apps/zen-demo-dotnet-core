@@ -66,15 +66,25 @@ namespace zen_demo_dotnet.Controllers
                 return BadRequest("Command is required");
             }
 
-            var result = _appHelpers.ExecuteShellCommand(request.UserCommand);
-            return Ok(result);
+            var result = _appHelpers.ExecuteShellCommand(request.UserCommand, out string output);
+            if (result != 0)
+            {
+                return StatusCode(500, "Error while executing command: " + output);
+            }
+
+            return Ok(output);
         }
 
         [HttpGet("api/execute/{command}")]
         public IActionResult ExecuteCommandGet(string command)
         {
-            var result = _appHelpers.ExecuteShellCommand(command);
-            return Ok(result);
+            var result = _appHelpers.ExecuteShellCommand(command, out string output);
+            if (result != 0)
+            {
+                return StatusCode(500, "Error while executing command: " + output);
+            }
+            
+            return Ok(output);
         }
 
         [HttpPost("api/request")]
