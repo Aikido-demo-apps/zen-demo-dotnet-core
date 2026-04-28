@@ -16,8 +16,9 @@ RUN dotnet publish -c Release -o /app
 FROM mcr.microsoft.com/dotnet/aspnet:${DOTNET_SDK_VERSION}
 
 # vsdbg for ssh debugging
-RUN apt-get update && apt-get install -y curl
-RUN curl -sSL https://aka.ms/getvsdbgsh | bash /dev/stdin -v latest -l /vsdbg
+RUN apt-get update && apt-get install -y curl tini procps && \
+    curl -sSL https://aka.ms/getvsdbgsh | bash /dev/stdin -v latest -l /vsdbg && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ENV ASPNETCORE_URLS http://+:8080
 ENV ASPNETCORE_ENVIRONMENT Production
@@ -25,4 +26,6 @@ ENV AIKIDO_BLOCK true
 EXPOSE 8080
 WORKDIR /app
 COPY --from=build /app .
-ENTRYPOINT [ "dotnet", "zen-demo-dotnet.dll" ]
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+ENTRYPOINT [ "/usr/bin/tini", "--", "/usr/local/bin/docker-entrypoint.sh" ]
