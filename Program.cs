@@ -140,6 +140,12 @@ app.Use((context, next) =>
         }
     }
 
+    var rateLimitGroupId = context.Request.Cookies["RateLimitingGroupID"];
+    if (!string.IsNullOrWhiteSpace(rateLimitGroupId))
+    {
+        Zen.SetRateLimitGroup(rateLimitGroupId, context);
+    }
+
     return next();
 });
 
