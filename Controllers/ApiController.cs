@@ -58,6 +58,23 @@ namespace zen_demo_dotnet.Controllers
             return Ok("Success!");
         }
 
+        [HttpPost("api/create-form")]
+        public async Task<IActionResult> CreatePetForm([FromForm] CreateRequest request)
+        {
+            if (string.IsNullOrEmpty(request.Name))
+            {
+                return BadRequest("Name is required");
+            }
+
+            var rowsCreated = await _databaseHelper.CreatePetByNameAsync(request.Name);
+            if (rowsCreated == -1)
+            {
+                return StatusCode(500, "Database error occurred");
+            }
+            
+            return Ok("Success!");
+        }
+
         [HttpPost("api/execute")]
         public IActionResult ExecuteCommandPost([FromBody] CommandRequest request)
         {
