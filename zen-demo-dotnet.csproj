@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>zen_demo_dotnet</RootNamespace>
-    <AikidoZenDotNetCoreVersion Condition="'$(AikidoZenDotNetCoreVersion)' == ''">1.2.55</AikidoZenDotNetCoreVersion>
+    <AikidoZenDotNetCoreVersion>1.2.55</AikidoZenDotNetCoreVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -85,5 +85,17 @@
     <_ContentIncludedByDefault Remove="wwwroot\lib\jquery\dist\jquery.min.map" />
     <_ContentIncludedByDefault Remove="wwwroot\lib\jquery\LICENSE.txt" />
   </ItemGroup>
+
+  <Target Name="ValidateAikidoPackageVersion" BeforeTargets="Restore">
+    <ItemGroup>
+      <AikidoLocalPackage Include="local-feed/Aikido.Zen.DotNetCore.*.nupkg" />
+    </ItemGroup>
+
+    <Message Importance="High" Text="Using Aikido.Zen.DotNetCore version: $(AikidoZenDotNetCoreVersion)" />
+
+    <Error
+      Condition="'@(AikidoLocalPackage)' != '' and !Exists('local-feed/Aikido.Zen.DotNetCore.$(AikidoZenDotNetCoreVersion).nupkg')"
+      Text="local-feed contains Aikido.Zen.DotNetCore packages, but none matches requested version $(AikidoZenDotNetCoreVersion). The QA package version override is probably missing." />
+  </Target>
 
 </Project>
