@@ -4,13 +4,14 @@ ARG DOTNET_SDK_VERSION=10.0
 
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION}${DOTNET_OS_VERSION} AS build
 WORKDIR /src
+ARG DOTNET_BUILD_ARGS
 
 # copy everything
 COPY . ./
 # restore as distinct layers
-RUN dotnet restore
+RUN dotnet restore $DOTNET_BUILD_ARGS
 # build and publish a release
-RUN dotnet publish -c Release -o /app
+RUN dotnet publish -c Release -o /app --no-restore $DOTNET_BUILD_ARGS
 
 # final stage/image
 FROM mcr.microsoft.com/dotnet/aspnet:${DOTNET_SDK_VERSION}
