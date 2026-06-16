@@ -3,3 +3,5 @@ bin/
 .aider*
 /.vs
 /zen-demo-dotnet.csproj.user
+local-feed/*
+!local-feed/.gitkeep
