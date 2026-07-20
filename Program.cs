@@ -149,6 +149,21 @@ app.Use((context, next) =>
     return next();
 });
 
+// Apply database migrations at startup
+try
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        dbContext.Database.Migrate();
+        Console.WriteLine("Database migration completed successfully");
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"An error occurred while migrating the database: {ex.Message}");
+}
+
 // Important: UseRouting must come before UseZenFirewall to ensure we receive all context information
 app.UseRouting();
 
@@ -174,21 +189,6 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-}
-
-// Apply database migrations at startup
-try
-{
-    using (var scope = app.Services.CreateScope())
-    {
-        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        dbContext.Database.Migrate();
-        Console.WriteLine("Database migration completed successfully");
-    }
-}
-catch (Exception ex)
-{
-    Console.WriteLine($"An error occurred while migrating the database: {ex.Message}");
 }
 
 app.Run();
