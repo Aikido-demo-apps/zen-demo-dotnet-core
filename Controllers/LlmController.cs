@@ -59,7 +59,7 @@ namespace zen_demo_dotnet.Controllers
                 {
                     Messages = messages,
                     MaxTokens = 512,
-                    Model = Anthropic.SDK.Constants.AnthropicModels.Claude35Sonnet,
+                    Model = "claude-haiku-4-5",
                     Stream = false,
                     System = [new Anthropic.SDK.Messaging.SystemMessage(prompt)],
                 };
