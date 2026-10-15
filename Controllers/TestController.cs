@@ -1,4 +1,3 @@
-using Aikido.Zen.DotNetCore;
 using Microsoft.AspNetCore.Mvc;
 
 namespace zen_demo_dotnet.Controllers
@@ -6,21 +5,6 @@ namespace zen_demo_dotnet.Controllers
     [ApiController]
     public class TestController : ControllerBase
     {
-        [HttpGet("api/custom-event")]
-        public IActionResult TrackCustomEvent([FromQuery] int count = 1)
-        {
-            if (count < 1 || count > 100)
-            {
-                return BadRequest("count must be an integer between 1 and 100");
-            }
-
-            for (var index = 0; index < count; index++)
-            {
-                Zen.Track("user.login_failed");
-            }
-            return Content("Events tracked");
-        }
-
         [HttpGet("test_ratelimiting_1")]
         public IActionResult TestRateLimiting1()
         {
