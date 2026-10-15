@@ -182,6 +182,19 @@ app.UseStaticFiles();
 app.UseTestingMiddleware(); // used to test unregistered routes
 app.UsePublicFallback();
 app.MapHealthChecks("/healthz");
+app.MapGet("/api/custom-event", (int count = 1) =>
+{
+    if (count < 1 || count > 100)
+    {
+        return Results.Text("count must be an integer between 1 and 100", statusCode: 400);
+    }
+
+    for (var index = 0; index < count; index++)
+    {
+        Zen.Track("user.login_failed");
+    }
+    return Results.Text("Events tracked");
+});
 app.MapRazorPages();
 app.MapControllers();
 
