@@ -39,13 +39,16 @@ namespace zen_demo_dotnet.Controllers
 
             if (request.Provider == "openai")
             {
-                var openAiClient = new ChatClient("gpt-3.5-turbo", Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
+                var openAiClient = new ChatClient("gpt-6-luna", Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
                 var messages = new List<ChatMessage>
                 {
                     new SystemChatMessage(prompt),
                     new UserChatMessage(request.Message)
                 };
-                var chatResult = await openAiClient.CompleteChatAsync(messages);
+#pragma warning disable OPENAI001
+                var options = new ChatCompletionOptions { ReasoningEffortLevel = "none" };
+#pragma warning restore OPENAI001
+                var chatResult = await openAiClient.CompleteChatAsync(messages, options);
                 response = chatResult.Value.Content.First().Text;
             }
             else if (request.Provider == "anthropic")
