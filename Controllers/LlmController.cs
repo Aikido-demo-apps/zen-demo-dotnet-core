@@ -46,7 +46,7 @@ namespace zen_demo_dotnet.Controllers
                     new UserChatMessage(request.Message)
                 };
 #pragma warning disable OPENAI001
-                var options = new ChatCompletionOptions { ReasoningEffortLevel = "none" };
+                var options = new ChatCompletionOptions { ReasoningEffortLevel = ChatReasoningEffortLevel.None };
 #pragma warning restore OPENAI001
                 var chatResult = await openAiClient.CompleteChatAsync(messages, options);
                 response = chatResult.Value.Content.First().Text;
